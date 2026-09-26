@@ -1,5 +1,9 @@
 import { getDocument, GlobalWorkerOptions, TextLayer } from './pdfjs/pdf.min.mjs';
 
+document.querySelectorAll('footer [data-current-year]').forEach(year => {
+  year.textContent = String(new Date().getFullYear());
+});
+
 const pdfUrl = '/Mingyu_Wang_Data_Analyst_CV.pdf';
 GlobalWorkerOptions.workerSrc = new URL('./pdfjs/pdf.worker.min.mjs', import.meta.url).href;
 

@@ -37,8 +37,8 @@ export const homeText = new Map([
   ['Data Analytics · Business Analytics · Financial &amp; Risk Analytics · Product Analytics · FinTech', '資料分析 · 商業分析 · 金融與風險分析 · 產品分析 · FinTech'],
   ['Based in New Taipei City, Taiwan · Open to opportunities across Taiwan', '現居新北市 · 接受全台工作機會'],
   ['On-site · Hybrid · Remote · Available from October 2026', 'On-site · Hybrid · Remote · 2026 年 10 月起可到職'],
-  ['<footer class="container"><p>Mingyu Wang</p>', '<footer class="container"><p>王明宇</p>'],
-  ['Data. Evidence. Understanding.', '資料 · 證據 · 理解'],
+  ['<footer class="container"><p>Mingyu Wang ©', '<footer class="container"><p>王明宇 ©'],
+  ['Data · Evidence · Understanding', '資料 · 證據 · 理解'],
   ['Back to top ↑', '回到頂端 ↑']
 ]);
 

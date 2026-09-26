@@ -85,8 +85,8 @@ const copy = [
   ['<dt>Final results</dt><dd>Expected November 2026</dd>', '<dt>最終成績</dt><dd>預計 2026 年 11 月公布</dd>'],
   ['Completed</dd>', '已完成</dd>', 3],
   [' credits', ' 學分', 12],
-  ['<footer class="container"><p>Mingyu Wang</p>', '<footer class="container"><p>王明宇</p>'],
-  ['Data. Evidence. Understanding.', '資料 · 證據 · 理解'],
+  ['<footer class="container"><p>Mingyu Wang ©', '<footer class="container"><p>王明宇 ©'],
+  ['Data · Evidence · Understanding', '資料 · 證據 · 理解'],
   ['Back to top ↑', '回到頂端 ↑'],
   ['href="#top">回到頂端', 'href="/zh/bristol.html#top">回到頂端']
 ];

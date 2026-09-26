@@ -1,4 +1,7 @@
 const header = document.querySelector('.glass-nav');
+document.querySelectorAll('footer [data-current-year]').forEach(year => {
+  year.textContent = String(new Date().getFullYear());
+});
 const toggle = document.querySelector('.menu-toggle');
 const nav = document.querySelector('#nav-links');
 const mobile = matchMedia('(max-width: 700px)');

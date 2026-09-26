@@ -86,8 +86,9 @@ const copy = [
   ['Back to selected projects', '返回精選專案'],
   ['Next Project →', '下一個專案 →'],
   ['Customer Behaviour–Driven Risk Analysis', '顧客行為驅動的風險分析'],
-  ['Data. Evidence. Understanding.', '資料．證據．理解。'],
-  ['Back to top ↑', '返回頂端 ↑']
+  ['<footer class="container"><p>Mingyu Wang ©', '<footer class="container"><p>王明宇 ©'],
+  ['Data · Evidence · Understanding', '資料 · 證據 · 理解'],
+  ['Back to top ↑', '回到頂端 ↑']
 ];
 
 export function localizeMindpassPage(english) {

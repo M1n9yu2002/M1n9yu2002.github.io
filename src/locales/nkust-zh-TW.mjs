@@ -50,8 +50,8 @@ const copy = [
   ['<dd>National Kaohsiung University of Science and Technology</dd>', '<dd>國立高雄科技大學</dd>'],
   ['<dt>Study period</dt>', '<dt>就讀期間</dt>'],
   ['<dt>Credits completed</dt>', '<dt>修畢學分</dt>'],
-  ['<footer class="container"><p>Mingyu Wang</p>', '<footer class="container"><p>王明宇</p>'],
-  ['Data. Evidence. Understanding.', '資料 · 證據 · 理解'],
+  ['<footer class="container"><p>Mingyu Wang ©', '<footer class="container"><p>王明宇 ©'],
+  ['Data · Evidence · Understanding', '資料 · 證據 · 理解'],
   ['Back to top ↑', '回到頂端 ↑'],
   ['href="#top">回到頂端', 'href="/zh/nkust.html#top">回到頂端']
 ];
