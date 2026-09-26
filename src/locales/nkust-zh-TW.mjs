@@ -1,7 +1,7 @@
 // The English NKUST page supplies the structure and selected completed courses.
 // Chinese course names below were checked against the user-provided NKUST transcript.
 const copy = [
-  ['<html lang="en">', '<html lang="zh-TW">'],
+  ['<html lang="en">', '<html lang="zh-Hant">'],
   ['<title>Mingyu Wang | National Kaohsiung University of Science and Technology</title>', '<title>王明宇｜國立高雄科技大學</title>'],
   [`<meta name="description" content="Mingyu Wang's BSc Information Management at National Kaohsiung University of Science and Technology, covering programming, data analytics, information systems, networks, digital business and emerging technologies.">`, '<meta name="description" content="王明宇於國立高雄科技大學資訊管理學士期間的學習基礎，涵蓋程式設計、資料分析、資訊系統、網路與資安，以及商業與新興科技。">'],
   ['./assets/', '../assets/', 3],

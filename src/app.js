@@ -66,10 +66,9 @@ if ('IntersectionObserver' in window && !reducedMotion.matches) {
  document.querySelectorAll('.case-hero h1.reveal.ready, .bristol-hero-type.reveal.ready, .nkust-hero-type.reveal.ready, .home-page .hero-copy .reveal.ready').forEach(el => el.classList.remove('ready'));
 }
 
-// Dissertation results animate once when reached; the HTML always starts with final values.
+// The dissertation bars and the two T90 attainment percentages animate once.
 const resultSection = document.querySelector('.concise-results');
 if (resultSection && 'IntersectionObserver' in window && !reducedMotion.matches) {
- const countNodes = [...resultSection.querySelectorAll('[data-count-to]')];
  resultSection.classList.add('motion-ready');
  const lineObserver = new IntersectionObserver(entries => {
   for (const entry of entries) if (entry.isIntersecting) {
@@ -78,36 +77,155 @@ if (resultSection && 'IntersectionObserver' in window && !reducedMotion.matches)
   }
  }, {threshold:.25});
  lineObserver.observe(resultSection.querySelector('.recovery-plot'));
- const earlyResult=resultSection.querySelector('.early-result');
+ const earlyResult = resultSection.querySelector('.early-result');
+ const countNodes = [...earlyResult.querySelectorAll('[data-count-to]')];
+ let countStarted = false;
+ const showFinalValues = () => countNodes.forEach(node => {
+  node.textContent = Number(node.dataset.countTo).toFixed(2);
+  node.style.flex = '';
+  node.style.minWidth = '';
+ });
  const countObserver = new IntersectionObserver(entries => {
-  for (const entry of entries) if (entry.isIntersecting) {
-   countObserver.unobserve(entry.target);
-   entry.target.classList.add('count-started');
-   countNodes.forEach(node => {
-    const target=Number(node.dataset.countTo);
-    const duration=1500;
-    let start;
-    node.textContent='0.00';
-    function frame(time) {
-     if (reducedMotion.matches) {node.textContent=target.toFixed(2);return;}
-     if (start === undefined) start=time;
-     const progress=Math.min((time-start)/duration,1);
-     const eased=1-Math.pow(1-progress,3);
-     node.textContent=(target*eased).toFixed(2);
-     if(progress<1) requestAnimationFrame(frame);
-     else node.textContent=target.toFixed(2);
-    }
-    requestAnimationFrame(frame);
+  if (!entries.some(entry => entry.isIntersecting) || countStarted) return;
+  countStarted = true;
+  countObserver.disconnect();
+  function beginCount() {
+   if (reducedMotion.matches) { showFinalValues(); return; }
+   // Let the existing reveal begin before changing the visible numerals.
+   if (earlyResult.classList.contains('motion-pending')) { requestAnimationFrame(beginCount); return; }
+   const duration = 700;
+   const values = countNodes.map(node => ({node, target: Number(node.dataset.countTo)}));
+   const revealTransform = getComputedStyle(earlyResult).transform;
+   const revealScale = revealTransform === 'none' ? 1 : new DOMMatrixReadOnly(revealTransform).a;
+   values.forEach(({node}) => {
+    node.style.flex = `0 0 ${node.getBoundingClientRect().width / revealScale}px`;
+    node.style.minWidth = '0';
    });
+   const start = performance.now();
+   function frame(now) {
+    if (reducedMotion.matches) { showFinalValues(); return; }
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    values.forEach(({node, target}) => { node.textContent = (target * eased).toFixed(2); });
+    if (progress < 1) requestAnimationFrame(frame);
+    else showFinalValues();
+   }
+   requestAnimationFrame(frame);
   }
+  requestAnimationFrame(beginCount);
  }, {threshold:.3});
  countObserver.observe(earlyResult);
  reducedMotion.addEventListener('change', event => {
   if (!event.matches) return;
-  lineObserver.disconnect();countObserver.disconnect();
+  lineObserver.disconnect();
+  countObserver.disconnect();
+  showFinalValues();
   resultSection.classList.remove('motion-ready');
-  countNodes.forEach(node=>{node.textContent=Number(node.dataset.countTo).toFixed(2);});
  });
+}
+
+// Motion is attached to existing narrative groups, without changing their markup
+// or requiring a new scroll position. The final state is the original design.
+if ('IntersectionObserver' in window && !reducedMotion.matches) {
+ const groups = [
+  ['.home-page .project-preview', 'rise'],
+  ['.dissertation-page .scale-sequence li, .dissertation-page .design-flow li, .dissertation-page .persistence-pairs > div, .dissertation-page .validation-stats > div', 'rise'],
+  ['.dissertation-page .recovery-plot, .dissertation-page .early-result, .dissertation-page .robustness', 'visual'],
+  ['.modelling-page .modelling-flow li, .modelling-page .modelling-subsection, .modelling-page .modelling-result, .modelling-page .modelling-evidence-grid > div', 'rise'],
+  ['.mindpass-page .mindpass-lifecycle li, .mindpass-page .mindpass-architecture-layer, .mindpass-page .mindpass-validation-grid > *, .mindpass-page .mindpass-outcomes > li', 'rise'],
+  ['.mindpass-page .mindpass-schema', 'visual'],
+  ['.risk-page .risk-flow-steps li, .risk-page .risk-signal-list li, .risk-page .risk-decision-list li', 'rise'],
+  ['.risk-page .risk-evidence-figure', 'chart'],
+  ['.bristol-page .bristol-themes > div, .nkust-page .nkust-outcomes > *', 'rise']
+ ];
+ const targets = groups.flatMap(([selector, kind]) => [...document.querySelectorAll(selector)].map(node => ({node, kind})));
+ const motionObserver = new IntersectionObserver(entries => {
+  for (const entry of entries) if (entry.isIntersecting) {
+   entry.target.classList.remove('motion-pending');
+   motionObserver.unobserve(entry.target);
+  }
+ }, {rootMargin:'0px 0px -8% 0px', threshold:0});
+ for (const {node, kind} of targets) {
+  node.classList.add('motion-enter', `motion-${kind}`, 'motion-pending');
+  motionObserver.observe(node);
+ }
+ reducedMotion.addEventListener('change', event => {
+  if (!event.matches) return;
+  motionObserver.disconnect();
+  targets.forEach(({node}) => node.classList.remove('motion-pending'));
+ });
+}
+
+// The cohort comparison reads as a single 200 → 40 decision, once per visit.
+const cohortVisual = document.querySelector('.risk-cohort-visual');
+if (cohortVisual && 'IntersectionObserver' in window && !reducedMotion.matches) {
+ cohortVisual.classList.add('sequence-ready');
+ const cohortObserver = new IntersectionObserver(entries => {
+  if (!entries.some(entry => entry.isIntersecting)) return;
+  cohortVisual.classList.add('sequence-visible');
+  cohortObserver.disconnect();
+ }, {threshold:.4});
+ cohortObserver.observe(cohortVisual);
+ reducedMotion.addEventListener('change', event => {
+  if (!event.matches) return;
+  cohortObserver.disconnect();
+  cohortVisual.classList.remove('sequence-ready', 'sequence-visible');
+ });
+}
+
+// Validation first shows the reconciled scale, then the zero-error outcome.
+const validationStats = document.querySelector('.dissertation-page .validation-stats');
+if (validationStats) {
+ const cards = [...validationStats.querySelectorAll(':scope > div')];
+ const counts = cards.slice(0, 2).map(card => {
+  const node = card.querySelector('dd');
+  return {node, target: Number(node.textContent.replaceAll(',', ''))};
+ });
+ const formatCount = new Intl.NumberFormat('en-US', {maximumFractionDigits: 0});
+ const showFinalValidation = () => {
+  counts.forEach(({node, target}) => { node.textContent = formatCount.format(target); });
+  validationStats.classList.add('validation-complete');
+ };
+ if (!('IntersectionObserver' in window) || reducedMotion.matches) showFinalValidation();
+ else {
+  let started = false;
+  let stopped = false;
+  const validationObserver = new IntersectionObserver(entries => {
+   if (started || !entries.some(entry => entry.isIntersecting)) return;
+   started = true;
+   validationObserver.disconnect();
+   function beginValidation() {
+    if (stopped || reducedMotion.matches) { showFinalValidation(); return; }
+    // The existing card reveal owns the movement; values begin once it starts.
+    if (cards.slice(0, 2).some(card => card.classList.contains('motion-pending'))) {
+     requestAnimationFrame(beginValidation);
+     return;
+    }
+    const start = performance.now();
+    const duration = 800;
+    function frame(now) {
+     if (stopped || reducedMotion.matches) { showFinalValidation(); return; }
+     const progress = Math.min((now - start) / duration, 1);
+     const eased = 1 - Math.pow(1 - progress, 3);
+     counts.forEach(({node, target}) => {
+      node.textContent = formatCount.format(Math.round(target * eased));
+     });
+     if (progress >= .96) validationStats.classList.add('validation-complete');
+     if (progress < 1) requestAnimationFrame(frame);
+     else showFinalValidation();
+    }
+    requestAnimationFrame(frame);
+   }
+   requestAnimationFrame(beginValidation);
+  }, {threshold:.45, rootMargin:'0px 0px -8% 0px'});
+  validationObserver.observe(validationStats);
+  reducedMotion.addEventListener('change', event => {
+   if (!event.matches) return;
+   stopped = true;
+   validationObserver.disconnect();
+   showFinalValidation();
+  });
+ }
 }
 
 // MindPass schema connectors are measured from the rendered table fields, so
@@ -220,7 +338,7 @@ if (mindpassSchema) {
   const expanded = !mindpassSchema.classList.contains('is-expanded');
   mindpassSchema.classList.toggle('is-expanded', expanded);
   toggle.setAttribute('aria-expanded', String(expanded));
-  toggle.innerHTML = `${expanded ? 'Collapse schema' : 'Explore schema detail'} <span aria-hidden="true">${expanded ? '−' : '+'}</span>`;
+  toggle.innerHTML = `${expanded ? (toggle.dataset.collapseLabel || 'Collapse schema') : (toggle.dataset.expandLabel || 'Explore schema detail')} <span aria-hidden="true">${expanded ? '−' : '+'}</span>`;
   extras.forEach(extra => extra.setAttribute('aria-hidden', String(!expanded)));
   peripherals.forEach(node => node.setAttribute('aria-hidden', String(!expanded)));
   relations.setAttribute('aria-hidden', String(!expanded));

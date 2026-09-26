@@ -10,6 +10,10 @@ import { addLanguageSwitch } from '../src/components/language-switch.mjs';
 import { localizeHomeTemplate, localizeHomeContent } from '../src/locales/zh-TW.mjs';
 import { localizeBristolPage } from '../src/locales/bristol-zh-TW.mjs';
 import { localizeNkustPage } from '../src/locales/nkust-zh-TW.mjs';
+import { localizeLiquidityShockPage } from '../src/locales/liquidity-shock-zh-TW.mjs';
+import { localizeMindpassPage } from '../src/locales/mindpass-zh-TW.mjs';
+import { localizeCustomerRiskPage } from '../src/locales/customer-risk-zh-TW.mjs';
+import { localizeModellingPage } from '../src/locales/modelling-pipeline-zh-TW.mjs';
 const scale=c.research.scale;
 const riskFigures=JSON.parse(await readFile(new URL('../src/data/customer-risk-figures.json',import.meta.url),'utf8'));
 if(scale.securities*scale.sessionsPerSecurity*scale.cutoffsPerSession!==scale.marketStates ||
@@ -57,9 +61,13 @@ const values={
 };
 const interpolate = (text, replacements=values) => text.replace(/\{\{(\w+)\}\}/g,(_,k)=>{if(!(k in replacements)) throw Error(`Unknown token ${k}`);return replacements[k]});
 const siteUrl='https://m1n9yu2002.github.io';
-const homeSeo = markup => markup.replace('</head>', `<link rel="canonical" href="${siteUrl}${markup.includes('<html lang="zh-TW">')?'/zh/':'/'}"><link rel="alternate" hreflang="en" href="${siteUrl}/"><link rel="alternate" hreflang="zh-TW" href="${siteUrl}/zh/"></head>`);
+const homeSeo = markup => markup.replace('</head>', `<link rel="canonical" href="${siteUrl}${markup.includes('<html lang="zh-Hant">')?'/zh/':'/'}"><link rel="alternate" hreflang="en" href="${siteUrl}/"><link rel="alternate" hreflang="zh-TW" href="${siteUrl}/zh/"></head>`);
 const bristolSeo = (markup, locale) => markup.replace('</head>', `<link rel="canonical" href="${siteUrl}${locale==='zh-TW'?'/zh/bristol.html':'/bristol.html'}"><link rel="alternate" hreflang="en" href="${siteUrl}/bristol.html"><link rel="alternate" hreflang="zh-TW" href="${siteUrl}/zh/bristol.html"></head>`);
 const nkustSeo = (markup, locale) => markup.replace('</head>', `<link rel="canonical" href="${siteUrl}${locale==='zh-TW'?'/zh/nkust.html':'/nkust.html'}"><link rel="alternate" hreflang="en" href="${siteUrl}/nkust.html"><link rel="alternate" hreflang="zh-TW" href="${siteUrl}/zh/nkust.html"></head>`);
+const liquidityShockSeo = (markup, locale) => markup.replace('</head>', `<link rel="canonical" href="${siteUrl}${locale==='zh-TW'?'/zh/liquidity-shock.html':'/liquidity-shock.html'}"><link rel="alternate" hreflang="en" href="${siteUrl}/liquidity-shock.html"><link rel="alternate" hreflang="zh-TW" href="${siteUrl}/zh/liquidity-shock.html"></head>`);
+const mindpassSeo = (markup, locale) => markup.replace('</head>', `<link rel="canonical" href="${siteUrl}${locale==='zh-TW'?'/zh/mindpass.html':'/mindpass.html'}"><link rel="alternate" hreflang="en" href="${siteUrl}/mindpass.html"><link rel="alternate" hreflang="zh-TW" href="${siteUrl}/zh/mindpass.html"></head>`);
+const customerRiskSeo = (markup, locale) => markup.replace('</head>', `<link rel="canonical" href="${siteUrl}${locale==='zh-TW'?'/zh/customer-risk.html':'/customer-risk.html'}"><link rel="alternate" hreflang="en" href="${siteUrl}/customer-risk.html"><link rel="alternate" hreflang="zh-TW" href="${siteUrl}/zh/customer-risk.html"></head>`);
+const modellingSeo = (markup, locale) => markup.replace('</head>', `<link rel="canonical" href="${siteUrl}${locale==='zh-TW'?'/zh/modelling-pipeline.html':'/modelling-pipeline.html'}"><link rel="alternate" hreflang="en" href="${siteUrl}/modelling-pipeline.html"><link rel="alternate" hreflang="zh-TW" href="${siteUrl}/zh/modelling-pipeline.html"></head>`);
 const zhContent=localizeHomeContent(c);
 const zhValues={
  ...values,
@@ -73,7 +81,7 @@ const zhValues={
 const zhHtml=homeSeo(interpolate(localizeHomeTemplate(html),zhValues));
 html=homeSeo(interpolate(html));
 // Matching destinations are enabled only after the corresponding page exists.
-const localizedPages = {'index.html': {zh:'/zh/'}, 'bristol.html': {zh:'/zh/bristol.html'}, 'nkust.html': {zh:'/zh/nkust.html'}};
+const localizedPages = {'index.html': {zh:'/zh/'}, 'bristol.html': {zh:'/zh/bristol.html'}, 'nkust.html': {zh:'/zh/nkust.html'}, 'liquidity-shock.html': {zh:'zh/liquidity-shock.html'}, 'mindpass.html': {zh:'zh/mindpass.html'}, 'customer-risk.html': {zh:'zh/customer-risk.html'}, 'modelling-pipeline.html': {zh:'zh/modelling-pipeline.html'}};
 const withLanguageSwitch = (filename, markup) => addLanguageSwitch(markup, {
  currentLocale: 'en', alternateHref: localizedPages[filename]?.zh ?? null
 });
@@ -100,7 +108,11 @@ const pages={
  'modelling-pipeline':modellingPage(c.projects.find(p=>p.id==='modelling-pipeline'),pagination('modelling-pipeline'))
  ,bristol:bristolPage(),nkust:nkustPage()
 };
-for(const [slug,page] of Object.entries(pages))await writeFile(new URL(`../dist/${slug}.html`,import.meta.url),withLanguageSwitch(`${slug}.html`,slug==='bristol'?bristolSeo(page,'en'):slug==='nkust'?nkustSeo(page,'en'):page));
+for(const [slug,page] of Object.entries(pages))await writeFile(new URL(`../dist/${slug}.html`,import.meta.url),withLanguageSwitch(`${slug}.html`,slug==='bristol'?bristolSeo(page,'en'):slug==='nkust'?nkustSeo(page,'en'):slug==='liquidity-shock'?liquidityShockSeo(page,'en'):slug==='mindpass'?mindpassSeo(page,'en'):slug==='customer-risk'?customerRiskSeo(page,'en'):slug==='modelling-pipeline'?modellingSeo(page,'en'):page));
+await writeFile(new URL('../dist/zh/liquidity-shock.html',import.meta.url),addLanguageSwitch(liquidityShockSeo(localizeLiquidityShockPage(pages['liquidity-shock']),'zh-TW'),{currentLocale:'zh-TW',alternateHref:'../liquidity-shock.html'}));
+await writeFile(new URL('../dist/zh/mindpass.html',import.meta.url),addLanguageSwitch(mindpassSeo(localizeMindpassPage(pages.mindpass),'zh-TW'),{currentLocale:'zh-TW',alternateHref:'../mindpass.html'}));
+await writeFile(new URL('../dist/zh/customer-risk.html',import.meta.url),addLanguageSwitch(customerRiskSeo(localizeCustomerRiskPage(pages['customer-risk']),'zh-TW'),{currentLocale:'zh-TW',alternateHref:'../customer-risk.html'}));
+await writeFile(new URL('../dist/zh/modelling-pipeline.html',import.meta.url),addLanguageSwitch(modellingSeo(localizeModellingPage(pages['modelling-pipeline']),'zh-TW'),{currentLocale:'zh-TW',alternateHref:'../modelling-pipeline.html'}));
 await writeFile(new URL('../dist/zh/bristol.html',import.meta.url),addLanguageSwitch(bristolSeo(localizeBristolPage(pages.bristol),'zh-TW'),{currentLocale:'zh-TW',alternateHref:'/bristol.html'}));
 await writeFile(new URL('../dist/zh/nkust.html',import.meta.url),addLanguageSwitch(nkustSeo(localizeNkustPage(pages.nkust),'zh-TW'),{currentLocale:'zh-TW',alternateHref:'/nkust.html'}));
 await writeFile(new URL('../dist/.nojekyll',import.meta.url),'');

@@ -1,7 +1,7 @@
 // Bristol's English component remains the structural and factual source.
 // Each checked replacement changes only the published Chinese rendering.
 const copy = [
-  ['<html lang="en">', '<html lang="zh-TW">'],
+  ['<html lang="en">', '<html lang="zh-Hant">'],
   ['<title>Mingyu Wang | University of Bristol</title>', '<title>王明宇｜布里斯托大學</title>'],
   [`<meta name="description" content="Mingyu Wang's MSc Financial Technology with Data Science at the University of Bristol, covering financial technology, statistical computing, data analytics, cloud data engineering and applied research.">`, '<meta name="description" content="王明宇於布里斯托大學金融科技與資料科學碩士的修課內容與實作經驗，涵蓋統計運算、資料分析、AWS 資料工程、金融科技與獨立研究。">'],
   ['./assets/', '../assets/', 3],
@@ -52,8 +52,6 @@ const copy = [
   ['Applied the programme’s ideas in a collaborative financial technology implementation project.', '透過團隊專題，將課程概念實作為金融科技系統。'],
   ['Four-person group MVP. Led technical implementation, integration and Sepolia validation; work covered relational data, funding logic, programmable escrow and settlement integration.', '四人團隊 MVP。主導技術實作、系統整合與 Sepolia 驗證，內容涵蓋關聯式資料、資金邏輯、可程式化 Escrow 託管與結算整合。'],
   ['RELATED PORTFOLIO EVIDENCE', '相關作品', 2],
-  ['href="./mindpass.html"', 'href="/mindpass.html"'],
-  ['href="./liquidity-shock.html"', 'href="/liquidity-shock.html"'],
   ['View project', '查看專案', 4],
   ['A substantial independent research project bringing together programme methods through planning, analysis, documentation and presentation.', '一項完整的獨立研究專題，整合研究規劃、資料分析、文件撰寫與成果簡報等課程能力。'],
   ['<dd>10</dd><dt>Nasdaq securities</dt>', '<dd>10</dd><dt>檔 Nasdaq 股票</dt>'],
